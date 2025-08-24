@@ -19,7 +19,11 @@
         v-for="cell in daysGrid"
         :key="cell.key"
         class="vc__cell"
-        :class="{ 'is-out': !cell.inCurrentMonth }"
+        :class="{
+          'is-out': !cell.inCurrentMonth,
+          'is-selected': isSelected(cell.date),
+          'is-today': isToday(cell.date)
+        }"
         type="button"
         @click="onSelect(cell.date)"
       >
@@ -125,6 +129,20 @@ export default {
       const day = String(d.getDate()).padStart(2, '0');
       return `${y}-${m}-${day}`
     },
+
+    isSelected(d) {
+      return this.modelValue && this.modelValue === this.toISO(d)
+    },
+
+    isToday(d) {
+      const today = new Date()
+      return (
+        d.getFullYear() === today.getFullYear() &&
+        d.getMonth() === today.getMonth() &&
+        d.getDate() === today.getDate()
+      )
+    },
+
     onSelect(d) {
       const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
       const iso = this.toISO(date)

@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <h1>Calendar</h1>
+    <h1>{{ currentLang === 'ru' ? 'Календарь' : 'Calendar' }}</h1>
 
     <button @click="toggleLang" class="lang-toggle">
       {{ currentLang === 'ru' ? 'Switch to English' : 'Переключить на русский' }}
