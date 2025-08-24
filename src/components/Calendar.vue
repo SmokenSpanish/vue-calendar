@@ -1,9 +1,9 @@
 <template>
   <div class="vc">
     <div class="vc__header">
-      <button class="vc__nav" type="button" @click="$emit('prev')">‹</button>
-      <div class="vc__title">Месяц Год</div>
-      <button class="vc__nav" type="button" @click="$emit('next')">›</button>
+      <button class="vc__nav" type="button" @click="prevMonth">‹</button>
+      <div class="vc__title">{{ monthLabel }} {{ viewYear }}</div>
+      <button class="vc__nav" type="button" @click="nextMonth">›</button>
     </div>
 
 
@@ -20,8 +20,54 @@
 
 
 <script>
+const LOCALES = {
+  ru: { months: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'] },
+  en: { months: ['January','February','March','April','May','June','July','August','September','October','November','December'] }
+}
 export default {
   name: 'AppCalendar',
+  props: {
+    value: {
+      type: String,
+      default: null
+    },
+    locale: {
+      type: String,
+      default: 'ru'
+    }
+  },
+  data() {
+    const base = this.parseISO(this.value) || new Date()
+    return {
+      viewYear: base.getFullYear(),
+      viewMonth: base.getMonth()
+    }
+  },
+  computed: {
+    monthLabel() {
+      return (LOCALES[this.locale] || LOCALES.ru).months[this.viewMonth]
+    },
+  },
+  methods: {
+    parseISO(str) {
+      if (!str) return null
+      const m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+      if (!m) return null
+      const d = new Date(+m[1], +m[2] - 1, +m[3])
+      if (d.getMonth() !== +m[2] - 1) return null
+      return d
+    },
+    nextMonth() {
+      const d = new Date(this.viewYear, this.viewMonth + 1, 1);
+      this.viewYear = d.getFullYear();
+      this.viewMonth = d.getMonth()
+    },
+    prevMonth() {
+      const d = new Date(this.viewYear, this.viewMonth - 1, 1);
+      this.viewYear = d.getFullYear();
+      this.viewMonth = d.getMonth()
+    },
+  }
 }
 </script>
 
