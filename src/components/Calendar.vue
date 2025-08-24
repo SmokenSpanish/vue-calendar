@@ -8,7 +8,9 @@
 
 
     <div class="vc__weekdays">
-      <div v-for="n in 7" :key="n" class="vc__weekday">Дн{{ n }}</div>
+      <div v-for="day in weekdayLabels" :key="day" class="vc__weekday">
+        {{ day }}
+      </div>
     </div>
 
 
@@ -30,8 +32,22 @@
 
 <script>
 const LOCALES = {
-  ru: { months: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'] },
-  en: { months: ['January','February','March','April','May','June','July','August','September','October','November','December'] }
+  ru: {
+    months: [
+      'Январь','Февраль','Март','Апрель','Май','Июнь',
+      'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'
+    ],
+    weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+    weekStartsOn: 1, // понедельник
+  },
+  en: {
+    months:
+      ['January','February','March','April','May','June',
+        'July','August','September','October','November','December'
+      ],
+    weekdays: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    weekStartsOn: 0, // воскресенье
+  }
 }
 export default {
   name: 'AppCalendar',
@@ -53,12 +69,23 @@ export default {
     }
   },
   computed: {
+    activeLocale() {
+      return LOCALES[this.locale] || LOCALES.ru
+    },
     monthLabel() {
-      return (LOCALES[this.locale] || LOCALES.ru).months[this.viewMonth]
+      return this.activeLocale.months[this.viewMonth]
+    },
+    weekdayLabels() {
+      const { weekdays, weekStartsOn } = this.activeLocale
+      return weekStartsOn === 0
+        ? weekdays
+        : [...weekdays.slice(1), weekdays[0]]
     },
     daysGrid() {
+      const { weekStartsOn } = this.activeLocale
       const first = new Date(this.viewYear, this.viewMonth, 1)
-      const startDay = (first.getDay() + 6) % 7 // делаем понедельник=0 для ru (пока так)
+      // сдвиг относительно выбранного первого дня недели
+      const startDay = (first.getDay() - weekStartsOn + 7) % 7
       const start = new Date(this.viewYear, this.viewMonth, 1 - startDay)
       const out = []
       for (let i = 0; i < 42; i++) {

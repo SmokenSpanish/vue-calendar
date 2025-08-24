@@ -1,8 +1,16 @@
 <template>
   <div class="app">
     <h1>Calendar</h1>
-    <Calendar v-model="picked" locale="ru" @select="onPick" />
-    <p>Выбрано: {{ picked }}</p>
+
+    <button @click="toggleLang" class="lang-toggle">
+      {{ currentLang === 'ru' ? 'Switch to English' : 'Переключить на русский' }}
+    </button>
+
+    <Calendar v-model="picked" :locale="currentLang" @select="onPick" />
+
+    <p>
+      {{ currentLang === 'ru' ? 'Выбрано:' : 'Selected:' }} {{ picked }}
+    </p>
   </div>
 </template>
 
@@ -15,8 +23,13 @@ export default {
   components: { Calendar },
   setup() {
     const picked = ref(null)
+    const currentLang = ref("ru")
     const onPick = (d) => console.log('select', d)
-    return { picked, onPick }
+    const toggleLang = () => {
+      currentLang.value = currentLang.value === "ru" ? "en" : "ru"
+    }
+
+    return { picked, currentLang, toggleLang, onPick }
   },
 }
 </script>
@@ -30,5 +43,29 @@ body {
 
 .app {
   padding: 25px;
+}
+
+.lang-toggle {
+  position: absolute;
+  top: 55px;
+  right: 25px;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lang-toggle:hover {
+  background: #e0e0e0;
+  border-color: #aaa;
+}
+
+.lang-toggle:active {
+  background: #d6d6d6;
+  transform: scale(0.97);
 }
 </style>
