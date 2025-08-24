@@ -13,7 +13,15 @@
 
 
     <div class="vc__grid">
-      <button v-for="n in 42" :key="n" class="vc__cell" type="button">{{ n }}</button>
+      <button
+        v-for="cell in daysGrid"
+        :key="cell.key"
+        class="vc__cell"
+        :class="{ 'is-out': !cell.inCurrentMonth }"
+        type="button"
+      >
+        {{ cell.date.getDate() }}
+      </button>
     </div>
   </div>
 </template>
@@ -47,6 +55,21 @@ export default {
     monthLabel() {
       return (LOCALES[this.locale] || LOCALES.ru).months[this.viewMonth]
     },
+    daysGrid() {
+      const first = new Date(this.viewYear, this.viewMonth, 1)
+      const startDay = (first.getDay() + 6) % 7 // делаем понедельник=0 для ru (пока так)
+      const start = new Date(this.viewYear, this.viewMonth, 1 - startDay)
+      const out = []
+      for (let i = 0; i < 42; i++) {
+        const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i)
+        out.push({
+          key: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+          date: d,
+          inCurrentMonth: d.getMonth() === this.viewMonth,
+        })
+      }
+      return out
+    }
   },
   methods: {
     parseISO(str) {
@@ -120,5 +143,10 @@ export default {
 }
 .vc__cell:hover {
   border-color: #bbb;
+}
+
+.vc__cell.is-out {
+  color: #aaa;
+  background: #fafafa;
 }
 </style>
