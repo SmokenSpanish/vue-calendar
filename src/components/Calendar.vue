@@ -19,6 +19,7 @@
         class="vc__cell"
         :class="{ 'is-out': !cell.inCurrentMonth }"
         type="button"
+        @click="onSelect(cell.date)"
       >
         {{ cell.date.getDate() }}
       </button>
@@ -35,7 +36,7 @@ const LOCALES = {
 export default {
   name: 'AppCalendar',
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: null
     },
@@ -90,6 +91,22 @@ export default {
       this.viewYear = d.getFullYear();
       this.viewMonth = d.getMonth()
     },
+
+    toISO(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`
+    },
+    onSelect(d) {
+      const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+      const iso = this.toISO(date)
+
+      this.$emit('update:modelValue', iso)
+      this.$emit('select', iso)
+      this.viewYear = date.getFullYear()
+      this.viewMonth = date.getMonth()
+    }
   }
 }
 </script>
@@ -148,5 +165,14 @@ export default {
 .vc__cell.is-out {
   color: #aaa;
   background: #fafafa;
+}
+
+.vc__cell.is-selected {
+  background: #e8f0ff;
+  border-color: #7aa7ff;
+  font-weight: 600;
+}
+.vc__cell.is-today {
+  border-color: #7aa7ff;
 }
 </style>
