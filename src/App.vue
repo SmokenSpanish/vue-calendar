@@ -2,18 +2,21 @@
   <div class="app">
     <h1>Calendar</h1>
     <p>Заглушка</p>
+    <Calendar />
   </div>
 </template>
 
 
 <script>
-export default { name: 'App' }
+import Calendar from './components/Calendar.vue'
+export default { name: 'App', components: { Calendar } }
 </script>
 
 
 <style>
 body {
-  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .app {
